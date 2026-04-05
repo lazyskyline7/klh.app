@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "profile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "image", "summary", "target"]
+    },
+    "socialLinks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "enum": ["LinkedIn", "GitHub", "Email"]
+          },
+          "link": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "link"]
+      }
+    },
+    "skillSet": {
+      "type": "object",
+      "properties": {
+        "proficiency": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "familiar": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "knowledge": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["proficiency", "familiar", "knowledge"]
+    },
+    "workExperience": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "position": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": ["location", "from", "to"]
+      }
+    },
+    "education": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "degree": {
+            "type": "string"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": ["location", "from", "to"]
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "githubLink": {
+            "type": "string"
+          }
+        },
+        "required": ["image", "content", "githubLink"]
+      }
+    }
+  },
+  "required": [
+    "profile",
+    "socialLinks",
+    "skillSet",
+    "workExperience",
+    "education",
+    "project"
+  ]
+}

@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+/* Tailwind v4: dark mode via .dark class selector (not media query) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* --- THEME CONFIGURATION (Tailwind v4) --- */
+@theme {
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Animation */
+  --animate-fade-in-down: fadeInDown 0.6s ease-out;
+  --animate-fade-in-left: fadeInLeft 0.6s ease-out 0.2s both;
+  --animate-fade-in-up: fadeInUp 0.6s ease-out 0.4s both;
+
+  /* Keyframes */
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /*
+    DYNAMIC COLORS
+    These CSS variables are set by the parent application (layout.tsx)
+    Colors use RGB space-separated values for Tailwind compatibility
+  */
+
+  /* Primary/Theme Colors (theme-* used in components) */
+  --color-primary-400: rgb(var(--theme-primary-400, 167 139 250));
+  --color-primary-500: rgb(var(--theme-primary-500, 139 92 246));
+  --color-primary-600: rgb(var(--theme-primary-600, 124 58 237));
+  --color-theme-400: rgb(var(--theme-primary-400, 167 139 250));
+  --color-theme-500: rgb(var(--theme-primary-500, 139 92 246));
+  --color-theme-600: rgb(var(--theme-primary-600, 124 58 237));
+
+  /* Blob Colors */
+  --color-blob-1: rgb(var(--theme-blob-1, 139 92 246));
+  --color-blob-2: rgb(var(--theme-blob-2, 59 130 246));
+  --color-blob-3: rgb(var(--theme-blob-3, 217 70 239));
+  --color-blob-4: rgb(var(--theme-blob-4, 139 92 246));
+
+  /* Gradients */
+  --color-gradient-from-light: rgb(var(--theme-gradient-from-light, 15 23 42));
+  --color-gradient-via-light: rgb(var(--theme-gradient-via-light, 15 23 42));
+  --color-gradient-to-light: rgb(var(--theme-gradient-to-light, 124 58 237));
+
+  --color-gradient-from-dark: rgb(var(--theme-gradient-from-dark, 248 250 252));
+  --color-gradient-via-dark: rgb(var(--theme-gradient-via-dark, 248 250 252));
+  --color-gradient-to-dark: rgb(var(--theme-gradient-to-dark, 167 139 250));
+
+  /* Print Colors */
+  --color-print-accent: rgb(var(--theme-print-accent, 79 70 229));
+  --color-print-text: rgb(var(--theme-print-text, 15 23 42));
+}
+
+/* Utilities Layer */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-sidebar {
+    @apply bg-slate-50/50 dark:bg-slate-900/50 dark:backdrop-blur-md;
+  }
+
+  .glass-card {
+    @apply bg-white/50 dark:bg-slate-800/30 dark:backdrop-blur-sm;
+  }
+
+  .glass-button {
+    @apply bg-slate-100/80 backdrop-blur-lg dark:bg-slate-800/80;
+  }
+}
+
+/* Base Layer */
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50;
+  }
+
+  /* Print Overrides */
+  @media print {
+    @page {
+      margin: 12mm 15mm;
+      size: A4 portrait;
+    }
+
+    * {
+      print-color-adjust: exact !important;
+      -webkit-print-color-adjust: exact !important;
+      animation: none !important;
+      transition: none !important;
+    }
+
+    body {
+      background: white !important;
+      /* Ensure text is dark in print */
+      @apply text-slate-900;
+    }
+  }
+}
+
+/* Global Transition */
+* {
+  @apply transition-colors duration-200;
+}
+
+.no-transition {
+  transition: none !important;
+}

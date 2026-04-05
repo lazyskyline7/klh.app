@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Theme Presets Schema",
+  "description": "Schema for resume theme configurations",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/definitions/themeColors"
+  },
+  "definitions": {
+    "rgbColor": {
+      "type": "string",
+      "pattern": "^(\\d{1,3} \\d{1,3} \\d{1,3})$",
+      "description": "Color in RGB format, e.g., '139 92 246'"
+    },
+    "themeColors": {
+      "type": "object",
+      "required": [
+        "primary500",
+        "primary600",
+        "primary400",
+        "gradientFromLight",
+        "gradientViaLight",
+        "gradientToLight",
+        "gradientFromDark",
+        "gradientViaDark",
+        "gradientToDark",
+        "blob1",
+        "blob2",
+        "blob3",
+        "blob4",
+        "printAccent",
+        "printText"
+      ],
+      "properties": {
+        "primary500": { "$ref": "#/definitions/rgbColor" },
+        "primary600": { "$ref": "#/definitions/rgbColor" },
+        "primary400": { "$ref": "#/definitions/rgbColor" },
+        "gradientFromLight": { "$ref": "#/definitions/rgbColor" },
+        "gradientViaLight": { "$ref": "#/definitions/rgbColor" },
+        "gradientToLight": { "$ref": "#/definitions/rgbColor" },
+        "gradientFromDark": { "$ref": "#/definitions/rgbColor" },
+        "gradientViaDark": { "$ref": "#/definitions/rgbColor" },
+        "gradientToDark": { "$ref": "#/definitions/rgbColor" },
+        "blob1": { "$ref": "#/definitions/rgbColor" },
+        "blob2": { "$ref": "#/definitions/rgbColor" },
+        "blob3": { "$ref": "#/definitions/rgbColor" },
+        "blob4": { "$ref": "#/definitions/rgbColor" },
+        "printAccent": { "$ref": "#/definitions/rgbColor" },
+        "printText": { "$ref": "#/definitions/rgbColor" }
+      }
+    }
+  }
+}

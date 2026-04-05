@@ -1,0 +1,44 @@
+{
+  "name": "klh.app",
+  "version": "0.1.0",
+  "description": "Personal site — resume, blog, and experiments",
+  "license": "MIT",
+  "author": {
+    "name": "Lance Hsu",
+    "email": "lance@klh.app",
+    "url": "https://klh.app"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "bun run fetch:data && next dev",
+    "dev:local": "next dev",
+    "fetch:data": "bun scripts/fetch-resume-data.ts",
+    "build": "bun run fetch:data && next build",
+    "start": "next start",
+    "lint": "eslint src",
+    "prettier": "prettier --write src"
+  },
+  "dependencies": {
+    "@next/third-parties": "^16.2.2",
+    "@tailwindcss/postcss": "^4.2.2",
+    "clsx": "^2.1.1",
+    "next": "^16.2.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-icons": "^5.6.0",
+    "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9",
+    "eslint-config-next": "^16.2.2",
+    "eslint-config-prettier": "^10.1.8",
+    "jsonc-loader": "^0.1.1",
+    "postcss": "^8.5.8",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "typescript": "^5"
+  }
+}
