@@ -18,7 +18,7 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <nav className="fixed top-4 right-4 z-50 print:hidden">
+      <nav className="fixed top-4 left-1/2 z-50 -translate-x-1/2 print:hidden">
         <LocaleSwitcher locale={locale} />
       </nav>
       {children}
