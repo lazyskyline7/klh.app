@@ -3,15 +3,13 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 
-const QUOTES = [
-  'Everything around me is someone else\'s life work.',
-  'The best code is no code at all.',
-  'Shipped is better than perfect.',
-  'Make it work, make it right, make it fast.',
-  'The obstacle is the way.',
-];
-
-export default function FooterEasterEgg({ name }: { name: string }) {
+export default function FooterEasterEgg({
+  name,
+  quotes,
+}: {
+  name: string;
+  quotes: string[];
+}) {
   const [revealed, setRevealed] = useState(false);
   const [quote, setQuote] = useState('');
 
@@ -19,7 +17,7 @@ export default function FooterEasterEgg({ name }: { name: string }) {
     if (revealed) {
       setRevealed(false);
     } else {
-      setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+      setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
       setRevealed(true);
     }
   };

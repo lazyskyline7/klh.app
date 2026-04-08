@@ -209,6 +209,21 @@ async function fetchBlogPosts(
   }
 }
 
+async function fetchQuotes(
+  repo: string,
+  ref: string,
+  token: string
+): Promise<void> {
+  try {
+    const content = await fetchFile(repo, 'quotes.json', ref, token);
+    await mkdir('src/content', { recursive: true });
+    await writeFile('src/content/quotes.json', content, 'utf8');
+    console.info('[fetch] Quotes: src/content/quotes.json');
+  } catch {
+    console.info('[fetch] Quotes: not found, skipping.');
+  }
+}
+
 async function main(): Promise<void> {
   const repo = getEnv('CONTENT_REPO');
   const ref = getEnv('CONTENT_REF') ?? 'main';
@@ -239,6 +254,7 @@ async function main(): Promise<void> {
     fetchResume(repo, ref, token),
     fetchLanding(repo, ref, token),
     fetchBlogPosts(repo, ref, token),
+    fetchQuotes(repo, ref, token),
   ]);
 }
 

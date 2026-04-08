@@ -76,6 +76,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
   const email = gravatar?.contact_info?.email ?? '';
   const verifiedAccounts = gravatar?.verified_accounts ?? [];
   const recentPosts = posts.slice(0, 4);
+  const quotes = await loadQuotes();
 
   return (
     <div
@@ -390,7 +391,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
           )}
         </section>
 
-        <FooterEasterEgg name={name} />
+        <FooterEasterEgg name={name} quotes={quotes} />
       </div>
     </div>
   );
@@ -526,5 +527,22 @@ async function fetchGravatarProfile(): Promise<GravatarProfile | null> {
     return (await res.json()) as GravatarProfile;
   } catch {
     return null;
+  }
+}
+
+const FALLBACK_QUOTES = ['Shipped is better than perfect.'];
+
+async function loadQuotes(): Promise<string[]> {
+  try {
+    const { readFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    const raw = await readFile(
+      join(process.cwd(), 'src/content/quotes.json'),
+      'utf8'
+    );
+    const quotes = JSON.parse(raw) as string[];
+    return quotes.length > 0 ? quotes : FALLBACK_QUOTES;
+  } catch {
+    return FALLBACK_QUOTES;
   }
 }
