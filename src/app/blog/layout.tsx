@@ -27,7 +27,7 @@ export default async function BlogLayout({
           <span className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span>
         </Link>
       </nav>
-      <SettingsMenu />
+      <SettingsMenu locale={locale} />
       {children}
     </div>
   );

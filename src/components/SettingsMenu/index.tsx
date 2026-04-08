@@ -81,10 +81,10 @@ const SettingsMenu: FC<SettingsMenuProps> = ({ locale }) => {
               )}
             >
               {LOCALES.filter((l) => l !== locale).map((l) => {
-                const targetPath = pathname.replace(
-                  `/${locale}`,
-                  `/${l}`
-                );
+                const hasLocalePrefix = pathname.startsWith(`/${locale}`);
+                const targetPath = hasLocalePrefix
+                  ? pathname.replace(`/${locale}`, `/${l}`)
+                  : `/${l}`;
                 return (
                   <Link
                     key={l}
