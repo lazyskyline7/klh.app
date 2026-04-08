@@ -200,12 +200,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
         {dictionary.now && dictionary.now.items.length > 0 && (
           <section className="animate-fade-in-up mb-8">
             <div className="mb-3 flex items-center justify-between px-1">
-              <h2
-                className={clsx(
-                  'text-xs font-semibold tracking-wider text-slate-400 uppercase',
-                  'dark:text-slate-500'
-                )}
-              >
+              <h2 className="section-label">
                 {dictionary.now.title}
               </h2>
               {dictionary.now.updated && (
@@ -214,13 +209,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
                 </span>
               )}
             </div>
-            <div
-              className={clsx(
-                'rounded-xl border p-4',
-                'border-slate-200/60 bg-white/60 backdrop-blur-sm',
-                'dark:border-white/5 dark:bg-slate-900/40'
-              )}
-            >
+            <div className="glass-card p-4">
               <ul className="flex flex-col gap-2">
                 {dictionary.now.items.map((item, i) => (
                   <li
@@ -240,12 +229,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
         {recentPosts.length > 0 && (
           <section className="animate-fade-in-up mb-8">
             <div className="mb-3 flex items-center justify-between px-1">
-              <h2
-                className={clsx(
-                  'text-xs font-semibold tracking-wider text-slate-400 uppercase',
-                  'dark:text-slate-500'
-                )}
-              >
+              <h2 className="section-label">
                 {dictionary.nav.blog}
               </h2>
               <Link
@@ -260,13 +244,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className={clsx(
-                    'group w-[260px] flex-none snap-start rounded-xl border p-4 transition-all',
-                    'border-slate-200/60 bg-white/60 backdrop-blur-sm',
-                    'hover:border-theme-500/40 hover:shadow-md',
-                    'dark:border-white/5 dark:bg-slate-900/40',
-                    'dark:hover:border-theme-400/30'
-                  )}
+                  className="glass-card-interactive group w-[260px] flex-none snap-start p-4"
                 >
                   <div className="mb-2 font-mono text-[10px] text-slate-400 dark:text-slate-500">
                     {new Date(post.date).toLocaleDateString('en-US', {
@@ -296,12 +274,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
         {/* Projects */}
         {dictionary.projects.items.length > 0 && (
           <section className="animate-fade-in-up mb-8">
-            <h2
-              className={clsx(
-                'mb-3 px-1 text-xs font-semibold tracking-wider text-slate-400 uppercase',
-                'dark:text-slate-500'
-              )}
-            >
+            <h2 className="section-label mb-3 px-1">
               {dictionary.projects.title}
             </h2>
             <div className="flex flex-col gap-2.5">
@@ -311,13 +284,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={clsx(
-                    'group rounded-xl border p-4 transition-all',
-                    'border-slate-200/60 bg-white/60 backdrop-blur-sm',
-                    'hover:border-theme-500/40 hover:shadow-md',
-                    'dark:border-white/5 dark:bg-slate-900/40',
-                    'dark:hover:border-theme-400/30'
-                  )}
+                  className="glass-card-interactive group p-4"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -334,21 +301,12 @@ export default async function LandingPage({ params }: LandingPageProps) {
                         {project.description}
                       </p>
                     </div>
-                    <span className="mt-0.5 text-slate-300 transition-transform group-hover:translate-x-0.5 dark:text-slate-600">
-                      →
-                    </span>
+                    <span className="hover-arrow mt-0.5">→</span>
                   </div>
                   {project.tags && (
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className={clsx(
-                            'rounded-md px-1.5 py-0.5 font-mono text-[10px]',
-                            'bg-slate-100 text-slate-500',
-                            'dark:bg-white/5 dark:text-slate-400'
-                          )}
-                        >
+                        <span key={tag} className="tag-pill">
                           {tag}
                         </span>
                       ))}
@@ -388,21 +346,16 @@ function LinkPill({
   muted?: boolean;
 }) {
   const classes = clsx(
-    'group flex items-center gap-3 rounded-xl border px-4 transition-all',
+    'group flex items-center gap-3 px-4',
     muted ? 'py-2' : 'py-3',
     muted
       ? [
-          'border-slate-200/30 bg-white/30',
+          'rounded-xl border border-slate-200/30 bg-white/30 transition-all',
           'hover:border-slate-200/60 hover:bg-white/50',
           'dark:border-white/3 dark:bg-slate-900/20',
           'dark:hover:border-white/5 dark:hover:bg-slate-900/40',
         ]
-      : [
-          'border-slate-200/60 bg-white/60 backdrop-blur-sm',
-          'hover:border-theme-500/40 hover:shadow-md hover:scale-[1.01]',
-          'dark:border-white/5 dark:bg-slate-900/40',
-          'dark:hover:border-theme-400/30',
-        ]
+      : 'glass-card-interactive hover:scale-[1.01]'
   );
 
   const content = (
@@ -429,10 +382,8 @@ function LinkPill({
       </span>
       <span
         className={clsx(
-          'transition-transform group-hover:translate-x-0.5',
-          muted
-            ? 'text-slate-200 dark:text-slate-700'
-            : 'text-slate-300 dark:text-slate-600'
+          'hover-arrow',
+          muted && 'text-slate-200 dark:text-slate-700'
         )}
       >
         →

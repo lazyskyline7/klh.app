@@ -34,12 +34,7 @@ export default async function BlogPage({
     >
       <div className="mx-auto w-full max-w-md">
         <header className="animate-fade-in-down mb-8">
-          <h2
-            className={clsx(
-              'mb-3 text-xs font-semibold tracking-wider text-slate-400 uppercase',
-              'dark:text-slate-500'
-            )}
-          >
+          <h2 className="section-label mb-3">
             Blog
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">

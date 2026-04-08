@@ -16,13 +16,7 @@ export default function CopyEmailPill({ email }: { email: string }) {
   return (
     <button
       onClick={handleClick}
-      className={clsx(
-        'group flex w-full cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-all',
-        'border-slate-200/60 bg-white/60 backdrop-blur-sm',
-        'hover:border-theme-500/40 hover:shadow-md hover:scale-[1.01]',
-        'dark:border-white/5 dark:bg-slate-900/40',
-        'dark:hover:border-theme-400/30'
-      )}
+      className="glass-card-interactive group flex w-full cursor-pointer items-center gap-3 px-4 py-3 hover:scale-[1.01]"
     >
       {copied ? (
         <AiOutlineCheck className="h-5 w-5 text-emerald-500 transition-colors" />
@@ -45,12 +39,7 @@ export default function CopyEmailPill({ email }: { email: string }) {
       >
         {copied ? 'Copied!' : email}
       </span>
-      <span
-        className={clsx(
-          'transition-transform group-hover:translate-x-0.5',
-          'text-slate-300 dark:text-slate-600'
-        )}
-      >
+      <span className="hover-arrow">
         {copied ? '' : '⎘'}
       </span>
     </button>

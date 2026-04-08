@@ -81,11 +81,7 @@ export default async function PostPage({ params }: PostPageProps) {
               <Link
                 key={tag}
                 href={`/blog?tag=${encodeURIComponent(tag)}`}
-                className={clsx(
-                  'rounded-md px-1.5 py-0.5 font-mono text-[10px] transition-colors',
-                  'bg-slate-100 text-slate-500 hover:text-theme-600',
-                  'dark:bg-white/5 dark:text-slate-400 dark:hover:text-theme-400'
-                )}
+                className="tag-pill transition-colors hover:text-theme-600 dark:hover:text-theme-400"
               >
                 {tag}
               </Link>

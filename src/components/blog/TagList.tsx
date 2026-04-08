@@ -13,11 +13,7 @@ const TagList: FC<TagListProps> = ({ tags, activeTag, counts }) => (
     {activeTag && (
       <Link
         href="/blog"
-        className={clsx(
-          'rounded-md px-2 py-0.5 font-mono text-[10px] transition-colors',
-          'bg-slate-100 text-slate-500 hover:text-slate-700',
-          'dark:bg-white/5 dark:text-slate-400 dark:hover:text-slate-200'
-        )}
+        className="tag-pill transition-colors hover:text-slate-700 dark:hover:text-slate-200"
       >
         All
       </Link>
@@ -29,10 +25,10 @@ const TagList: FC<TagListProps> = ({ tags, activeTag, counts }) => (
           key={tag}
           href={isActive ? '/blog' : `/blog?tag=${encodeURIComponent(tag)}`}
           className={clsx(
-            'rounded-md px-2 py-0.5 font-mono text-[10px] transition-colors',
+            'tag-pill transition-colors',
             isActive
               ? 'bg-theme-500/15 text-theme-600 dark:text-theme-400'
-              : 'bg-slate-100 text-slate-500 hover:text-slate-700 dark:bg-white/5 dark:text-slate-400 dark:hover:text-slate-200'
+              : 'hover:text-slate-700 dark:hover:text-slate-200'
           )}
         >
           {tag}
