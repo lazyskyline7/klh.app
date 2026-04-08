@@ -1,6 +1,6 @@
 'use client';
 import { FC } from 'react';
-import { MdDarkMode, MdLightMode, MdBrightnessAuto } from 'react-icons/md';
+import { MdDarkMode, MdLightMode, MdContrast } from 'react-icons/md';
 import { sendGAEvent } from '@next/third-parties/google';
 import { useTheme } from '@klh-app/theme';
 import Button from './Button';
@@ -33,7 +33,7 @@ const ThemeSwitcher: FC = () => {
   return (
     <Button onClick={handleToggle} title={LABELS[theme] ?? 'Toggle theme'}>
       <div className="relative size-6">
-        <MdBrightnessAuto
+        <MdContrast
           className={clsx(
             iconClasses,
             theme === 'system' ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
