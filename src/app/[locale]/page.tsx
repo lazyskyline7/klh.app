@@ -2,11 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
-import {
-  AiFillGithub,
-  AiFillLinkedin,
-  AiOutlineMail,
-} from 'react-icons/ai';
+import { AiFillGithub, AiFillLinkedin } from 'react-icons/ai';
 import { FaBluesky, FaTelegram, FaXTwitter } from 'react-icons/fa6';
 import { HiOutlineDocumentText, HiOutlinePencilSquare } from 'react-icons/hi2';
 import { HiOutlineGlobeAlt } from 'react-icons/hi2';
@@ -18,6 +14,7 @@ import {
 } from '@/lib/i18n';
 import { getAllPosts } from '@/lib/blog';
 import FooterEasterEgg from '@/components/FooterEasterEgg';
+import CopyEmailPill from '@/components/CopyEmailPill';
 
 interface LandingPageProps {
   params: Promise<{ locale: string }>;
@@ -190,13 +187,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
                 />
               );
             })}
-          {email && (
-            <LinkPill
-              href={`mailto:${email}`}
-              icon={AiOutlineMail}
-              label={email}
-            />
-          )}
+          {email && <CopyEmailPill email={email} />}
           <LinkPill
             href={`/${locale}/resume`}
             icon={HiOutlineDocumentText}
@@ -374,21 +365,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
           <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
             {dictionary.contact.cta}
           </p>
-          {email && (
-            <a
-              href={`mailto:${email}`}
-              className={clsx(
-                'inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-medium transition-all',
-                'border-theme-500/30 text-theme-600',
-                'hover:border-theme-500/60 hover:bg-theme-500/5 hover:shadow-sm',
-                'dark:border-theme-400/30 dark:text-theme-400',
-                'dark:hover:border-theme-400/50 dark:hover:bg-theme-400/5'
-              )}
-            >
-              <AiOutlineMail className="h-4 w-4" />
-              {email}
-            </a>
-          )}
+          {email && <CopyEmailPill email={email} />}
         </section>
 
         <FooterEasterEgg name={name} quotes={quotes} />
