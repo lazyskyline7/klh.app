@@ -38,7 +38,7 @@ export function proxy(request: NextRequest) {
   if (pathnameLocale) {
     // Set locale cookie and continue
     const response = NextResponse.next();
-    response.cookies.set('NEXT_LOCALE', pathnameLocale, { path: '/' });
+    response.cookies.set('NEXT_LOCALE', pathnameLocale, { path: '/', maxAge: 31536000 });
     return response;
   }
 
@@ -52,7 +52,7 @@ export function proxy(request: NextRequest) {
   url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
 
   const response = NextResponse.redirect(url);
-  response.cookies.set('NEXT_LOCALE', locale, { path: '/' });
+  response.cookies.set('NEXT_LOCALE', locale, { path: '/', maxAge: 31536000 });
   return response;
 }
 
