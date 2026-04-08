@@ -147,9 +147,6 @@ export default async function LandingPage({ params }: LandingPageProps) {
               ))}
             </div>
           )}
-          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            {dictionary.hero.tagline}
-          </p>
 
           {dictionary.hero.availability && (
             <span
