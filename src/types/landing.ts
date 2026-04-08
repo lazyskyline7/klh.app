@@ -4,6 +4,11 @@ export type LandingDictionary = {
     tagline: string;
     availability?: string;
   };
+  now?: {
+    title: string;
+    items: string[];
+    updated?: string;
+  };
   projects: {
     title: string;
     items: Array<{

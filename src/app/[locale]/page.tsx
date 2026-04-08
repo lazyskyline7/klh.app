@@ -17,6 +17,7 @@ import {
   type Locale,
 } from '@/lib/i18n';
 import { getAllPosts } from '@/lib/blog';
+import FooterEasterEgg from '@/components/FooterEasterEgg';
 
 interface LandingPageProps {
   params: Promise<{ locale: string }>;
@@ -121,8 +122,13 @@ export default async function LandingPage({ params }: LandingPageProps) {
             </p>
           )}
           {gravatar?.location && (
-            <p className="mb-4 font-mono text-[10px] text-slate-400 dark:text-slate-500">
+            <p className="mb-3 font-mono text-[10px] text-slate-400 dark:text-slate-500">
               📍 {gravatar.location}
+            </p>
+          )}
+          {gravatar?.description && (
+            <p className="mx-auto mb-4 max-w-xs text-xs leading-relaxed text-slate-400 dark:text-slate-500">
+              {gravatar.description}
             </p>
           )}
           <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
@@ -184,6 +190,46 @@ export default async function LandingPage({ params }: LandingPageProps) {
             muted
           />
         </section>
+
+        {/* Now */}
+        {dictionary.now && dictionary.now.items.length > 0 && (
+          <section className="animate-fade-in-up mb-8">
+            <div className="mb-3 flex items-center justify-between px-1">
+              <h2
+                className={clsx(
+                  'text-xs font-semibold tracking-wider text-slate-400 uppercase',
+                  'dark:text-slate-500'
+                )}
+              >
+                {dictionary.now.title}
+              </h2>
+              {dictionary.now.updated && (
+                <span className="font-mono text-[10px] text-slate-300 dark:text-slate-600">
+                  {dictionary.now.updated}
+                </span>
+              )}
+            </div>
+            <div
+              className={clsx(
+                'rounded-xl border p-4',
+                'border-slate-200/60 bg-white/60 backdrop-blur-sm',
+                'dark:border-white/5 dark:bg-slate-900/40'
+              )}
+            >
+              <ul className="flex flex-col gap-2">
+                {dictionary.now.items.map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300"
+                  >
+                    <span className="mt-0.5 text-theme-500/60">~</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
 
         {/* Blog Carousel */}
         {recentPosts.length > 0 && (
@@ -331,12 +377,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
           )}
         </section>
 
-        {/* Footer */}
-        <footer className="mt-12 text-center">
-          <p className="text-[10px] text-slate-300 dark:text-slate-700">
-            © {new Date().getFullYear()} {name}
-          </p>
-        </footer>
+        <FooterEasterEgg name={name} />
       </div>
     </div>
   );
