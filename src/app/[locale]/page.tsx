@@ -122,8 +122,13 @@ export default async function LandingPage({ params }: LandingPageProps) {
             </p>
           )}
           {gravatar?.location && (
-            <p className="mb-3 font-mono text-[10px] text-slate-400 dark:text-slate-500">
+            <p className="mb-2 font-mono text-[10px] text-slate-400 dark:text-slate-500">
               📍 {gravatar.location}
+            </p>
+          )}
+          {gravatar?.description && (
+            <p className="mb-3 text-xs text-slate-400 dark:text-slate-500">
+              {gravatar.description}
             </p>
           )}
           {gravatar?.interests && gravatar.interests.length > 0 && (
