@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { FC } from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
-import SettingsMenu from '@/components/resume/SettingMenu';
 import Bios from '@/components/resume/Bios';
 import Sidebar from '@/components/resume/Sidebar';
 import TimelineList from '@/components/resume/TimelineList';
@@ -127,7 +126,6 @@ export default async function ResumePage({ params }: ResumePageProps) {
       >
         Blog
       </Link>
-      <SettingsMenu />
       <EngagementTracker />
     </div>
   );

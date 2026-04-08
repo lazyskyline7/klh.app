@@ -138,11 +138,3 @@
   }
 }
 
-/* Global Transition */
-* {
-  @apply transition-colors duration-200;
-}
-
-.no-transition {
-  transition: none !important;
-}

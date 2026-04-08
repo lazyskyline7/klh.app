@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { SUPPORTED_LOCALES, isValidLocale } from '@/lib/i18n';
-import LocaleSwitcher from '@/components/LocaleSwitcher';
+import SettingsMenu from '@/components/SettingsMenu';
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
@@ -18,9 +18,7 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <nav className="fixed top-4 left-1/2 z-50 -translate-x-1/2 print:hidden">
-        <LocaleSwitcher locale={locale} />
-      </nav>
+      <SettingsMenu locale={locale} />
       {children}
     </>
   );

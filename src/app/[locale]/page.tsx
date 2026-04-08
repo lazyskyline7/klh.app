@@ -84,6 +84,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
               )}
               width={88}
               height={88}
+              priority
               unoptimized
             />
           )}
