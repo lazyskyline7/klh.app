@@ -430,17 +430,17 @@ type GravatarProfile = {
   interests?: GravatarInterest[];
 };
 
-const GRAVATAR_HASH =
-  'REDACTED';
-
 async function fetchGravatarProfile(): Promise<GravatarProfile | null> {
+  const hash = process.env.GRAVATAR_HASH;
+  if (!hash) return null;
+
   try {
     const headers: Record<string, string> = {};
     if (process.env.GRAVATAR_API_TOKEN) {
       headers.Authorization = `Bearer ${process.env.GRAVATAR_API_TOKEN}`;
     }
     const res = await fetch(
-      `https://api.gravatar.com/v3/profiles/${GRAVATAR_HASH}`,
+      `https://api.gravatar.com/v3/profiles/${hash}`,
       { headers, next: { revalidate: 3600 } }
     );
     if (!res.ok) return null;
