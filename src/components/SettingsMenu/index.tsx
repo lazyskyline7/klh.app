@@ -32,9 +32,6 @@ const SettingsMenu: FC<SettingsMenuProps> = ({ locale }) => {
     const newState = !isOpen;
     setIsOpen(newState);
     if (!newState) setLangOpen(false);
-    trackEvent('settings_toggle', {
-      state: newState ? 'open' : 'close',
-    });
   };
 
   useEffect(() => {

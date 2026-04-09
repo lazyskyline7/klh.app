@@ -2,11 +2,6 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { AiFillGithub, AiFillLinkedin } from 'react-icons/ai';
-import { FaBluesky, FaTelegram, FaXTwitter } from 'react-icons/fa6';
-import { HiOutlineDocumentText, HiOutlinePencilSquare } from 'react-icons/hi2';
-import { HiOutlineGlobeAlt } from 'react-icons/hi2';
-import { IconType } from 'react-icons';
 import {
   SUPPORTED_LOCALES,
   getDictionary,
@@ -15,6 +10,8 @@ import {
 import { getAllPosts } from '@/lib/blog';
 import FooterEasterEgg from '@/components/FooterEasterEgg';
 import CopyEmailPill from '@/components/CopyEmailPill';
+import LinkPill from '@/components/LinkPill';
+import TrackedLink from '@/components/TrackedLink';
 
 interface LandingPageProps {
   params: Promise<{ locale: string }>;
@@ -45,12 +42,12 @@ export async function generateMetadata({
   };
 }
 
-const SERVICE_ICONS: Record<string, IconType> = {
-  github: AiFillGithub,
-  linkedin: AiFillLinkedin,
-  bluesky: FaBluesky,
-  telegram: FaTelegram,
-  twitter: FaXTwitter,
+const SERVICE_ICON_NAMES: Record<string, string> = {
+  github: 'github',
+  linkedin: 'linkedin',
+  bluesky: 'bluesky',
+  telegram: 'telegram',
+  twitter: 'twitter',
 };
 
 const SERVICE_LABELS: Record<string, string> = {
@@ -167,30 +164,27 @@ export default async function LandingPage({ params }: LandingPageProps) {
         <section className="animate-fade-in-up mb-8 flex flex-col gap-2.5">
           <LinkPill
             href={`/${locale}/blog`}
-            icon={HiOutlinePencilSquare}
+            icon="pencil"
             label={dictionary.nav.blog}
           />
           {verifiedAccounts
             .filter((a) => !a.is_hidden)
-            .map((account) => {
-              const Icon = SERVICE_ICONS[account.service_type];
-              return (
-                <LinkPill
-                  key={account.service_type}
-                  href={account.url}
-                  icon={Icon ?? HiOutlineGlobeAlt}
-                  label={
-                    SERVICE_LABELS[account.service_type] ??
-                    account.service_label
-                  }
-                  external
-                />
-              );
-            })}
+            .map((account) => (
+              <LinkPill
+                key={account.service_type}
+                href={account.url}
+                icon={SERVICE_ICON_NAMES[account.service_type] ?? 'globe'}
+                label={
+                  SERVICE_LABELS[account.service_type] ??
+                  account.service_label
+                }
+                external
+              />
+            ))}
           {email && <CopyEmailPill email={email} />}
           <LinkPill
             href={`/${locale}/resume`}
-            icon={HiOutlineDocumentText}
+            icon="document"
             label={dictionary.nav.resume}
             muted
           />
@@ -279,8 +273,10 @@ export default async function LandingPage({ params }: LandingPageProps) {
             </h2>
             <div className="flex flex-col gap-2.5">
               {dictionary.projects.items.map((project) => (
-                <a
+                <TrackedLink
                   key={project.name}
+                  event="project_click"
+                  data={{ name: project.name }}
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -312,7 +308,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
                       ))}
                     </div>
                   )}
-                </a>
+                </TrackedLink>
               ))}
             </div>
           </section>
@@ -321,85 +317,6 @@ export default async function LandingPage({ params }: LandingPageProps) {
         <FooterEasterEgg name={name} quotes={quotes} />
       </div>
     </div>
-  );
-}
-
-function LinkPill({
-  href,
-  icon: Icon,
-  label,
-  external,
-  muted,
-}: {
-  href: string;
-  icon: IconType;
-  label: string;
-  external?: boolean;
-  muted?: boolean;
-}) {
-  const classes = clsx(
-    'group flex items-center gap-3 px-4',
-    muted ? 'py-2' : 'py-3',
-    muted
-      ? [
-          'rounded-xl border border-slate-200/30 bg-white/30 transition-all',
-          'hover:border-slate-200/60 hover:bg-white/50',
-          'dark:border-white/3 dark:bg-slate-900/20',
-          'dark:hover:border-white/5 dark:hover:bg-slate-900/40',
-        ]
-      : 'glass-card-interactive hover:scale-[1.01]'
-  );
-
-  const content = (
-    <>
-      <Icon
-        className={clsx(
-          'transition-colors',
-          muted ? 'h-4 w-4' : 'h-5 w-5',
-          muted
-            ? 'text-slate-300 group-hover:text-slate-400 dark:text-slate-600 dark:group-hover:text-slate-500'
-            : 'text-slate-400 group-hover:text-theme-600 dark:text-slate-500 dark:group-hover:text-theme-400'
-        )}
-      />
-      <span
-        className={clsx(
-          'flex-1 font-medium transition-colors',
-          muted ? 'text-xs' : 'text-sm',
-          muted
-            ? 'text-slate-400 group-hover:text-slate-500 dark:text-slate-500 dark:group-hover:text-slate-400'
-            : 'text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100'
-        )}
-      >
-        {label}
-      </span>
-      <span
-        className={clsx(
-          'hover-arrow',
-          muted && 'text-slate-200 dark:text-slate-700'
-        )}
-      >
-        →
-      </span>
-    </>
-  );
-
-  if (external || href.startsWith('mailto:')) {
-    return (
-      <a
-        href={href}
-        target={external ? '_blank' : undefined}
-        rel={external ? 'noopener noreferrer' : undefined}
-        className={classes}
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return (
-    <Link href={href} className={classes}>
-      {content}
-    </Link>
   );
 }
 
