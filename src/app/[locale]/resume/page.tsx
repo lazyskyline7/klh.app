@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Bios from '@/components/resume/Bios';
 import Sidebar from '@/components/resume/Sidebar';
 import TimelineList from '@/components/resume/TimelineList';
-import EngagementTracker from '@/components/resume/EngagementTracker';
 import { SUPPORTED_LOCALES, getResumeData, type Locale } from '@/lib/i18n';
 
 interface ResumePageProps {
@@ -127,7 +126,6 @@ export default async function ResumePage({ params }: ResumePageProps) {
       >
         <span className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span>
       </Link>
-      <EngagementTracker />
     </div>
   );
 }
