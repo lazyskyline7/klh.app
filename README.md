@@ -10,7 +10,7 @@ Personal site with a landing page hub, blog, and resume. Built with Next.js, Tai
 klh.app (this repo)          klh-content (private)        Gravatar API
 ├── Landing page hub    ←─── landing/{locale}.json        ← identity, avatar,
 ├── Blog (MDX)          ←─── blog/*.mdx                    social links
-└── Resume (i18n)       ←─── resume/{locale}/data.jsonc
+└── Resume (i18n)       ←─── resume/base/{locale}/data.jsonc + resume/variants/{variant}/{locale}.patch.jsonc
 ```
 
 Content is fetched from a private GitHub repo at build time. Identity data (name, avatar, job title, location, social links) comes from the [Gravatar REST API](https://docs.gravatar.com/rest-api/) — update your Gravatar profile and the site reflects it within an hour.
@@ -28,13 +28,13 @@ Content is fetched from a private GitHub repo at build time. Identity data (name
 
 ## Routes
 
-| Route | Description |
-|---|---|
-| `/` | Redirects to `/{locale}` via proxy |
-| `/{locale}` | Landing page hub |
-| `/{locale}/resume` | Resume |
-| `/{locale}/blog` | Blog list |
-| `/{locale}/blog/{slug}` | Blog post |
+| Route                   | Description                        |
+| ----------------------- | ---------------------------------- |
+| `/`                     | Redirects to `/{locale}` via proxy |
+| `/{locale}`             | Landing page hub                   |
+| `/{locale}/resume`      | Resume                             |
+| `/{locale}/blog`        | Blog list                          |
+| `/{locale}/blog/{slug}` | Blog post                          |
 
 Supported locales: `en`, `zh-TW`, `zh-CN`. Locale detection via `Accept-Language` header.
 
@@ -57,31 +57,32 @@ bun run dev:local
 
 ## Scripts
 
-| Script | Description |
-|---|---|
-| `bun run dev` | Fetch content + start dev server |
-| `bun run dev:local` | Start dev server with existing local content |
-| `bun run build` | Fetch content + production build |
+| Script                  | Description                                         |
+| ----------------------- | --------------------------------------------------- |
+| `bun run dev`           | Fetch content + start dev server                    |
+| `bun run dev:local`     | Start dev server with existing local content        |
+| `bun run build`         | Fetch content + production build                    |
 | `bun run fetch:content` | Fetch resume, landing, and blog content from GitHub |
-| `bun run lint` | ESLint |
-| `bun run prettier` | Prettier |
+| `bun run lint`          | ESLint                                              |
+| `bun run prettier`      | Prettier                                            |
 
 ## Environment Variables
 
 See [`.env.example`](.env.example) for all options. Required for content fetching:
 
-| Variable | Description |
-|---|---|
-| `CONTENT_REPO` | GitHub repo (`owner/repo`) containing content |
-| `CONTENT_GITHUB_TOKEN` | GitHub PAT with `contents:read` scope |
+| Variable               | Description                                   |
+| ---------------------- | --------------------------------------------- |
+| `CONTENT_REPO`         | GitHub repo (`owner/repo`) containing content |
+| `CONTENT_GITHUB_TOKEN` | GitHub PAT with `contents:read` scope         |
+| `RESUME_VARIANT`       | Resume variant id (`default`, `canva`, etc.)  |
 
 Optional:
 
-| Variable | Description |
-|---|---|
-| `GRAVATAR_HASH` | SHA256 hash of Gravatar email |
-| `GRAVATAR_API_TOKEN` | Gravatar API token (enables interests) |
-| `PRINT_EMAIL` | Email override for resume PDF export |
+| Variable                   | Description                                       |
+| -------------------------- | ------------------------------------------------- |
+| `GRAVATAR_HASH`            | SHA256 hash of Gravatar email                     |
+| `GRAVATAR_API_TOKEN`       | Gravatar API token (enables interests)            |
+| `PRINT_EMAIL`              | Email override for resume PDF export              |
 | `NEXT_PUBLIC_THEME_PRESET` | Theme preset (`default`, `meta`, `spotify`, etc.) |
 
 ## Content Structure (klh-content)
@@ -93,7 +94,10 @@ klh-content/
     zh-TW.json
     zh-CN.json
   resume/
-    en/data.jsonc        # Resume data per locale
+    base/
+      en/data.jsonc      # Canonical resume data per locale
+    variants/
+      canva/en.patch.jsonc  # JSON Merge Patch overlay
     data.schema.json     # Shared schema
   quotes.json            # Footer easter egg quotes
   blog/

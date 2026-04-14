@@ -1,5 +1,6 @@
 import { mkdir, stat, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
+import stripJsonComments from 'strip-json-comments';
 
 type GitHubContentsResponse = {
   type: string;
@@ -30,10 +31,6 @@ function getEnv(name: string): string | undefined {
   return value && value.trim().length > 0 ? value.trim() : undefined;
 }
 
-function coerceSchemaPath(jsonc: string): string {
-  return jsonc.replace(/("\$schema"\s*:\s*)"[^"]*"/, '$1"./data.schema.json"');
-}
-
 async function fileExists(filePath: string): Promise<boolean> {
   try {
     await stat(filePath);
@@ -55,6 +52,15 @@ const GITHUB_HEADERS = (token: string) => ({
 
 const SUPPORTED_LOCALES = ['en', 'zh-TW', 'zh-CN'];
 
+const RESUME_TOP_LEVEL_KEYS = new Set([
+  'profile',
+  'socialLinks',
+  'skillSet',
+  'workExperience',
+  'education',
+  'project',
+]);
+
 async function fetchFile(
   repo: string,
   filePath: string,
@@ -66,9 +72,7 @@ async function fetchFile(
   const bodyText = await res.text();
 
   if (!res.ok) {
-    throw new Error(
-      `[fetch] GitHub API failed (${res.status}): ${bodyText}`
-    );
+    throw new Error(`[fetch] GitHub API failed (${res.status}): ${bodyText}`);
   }
 
   const json = JSON.parse(bodyText) as GitHubContentsResponse;
@@ -79,27 +83,177 @@ async function fetchFile(
   return Buffer.from(json.content, 'base64').toString('utf8');
 }
 
+async function fetchOptionalFile(
+  repo: string,
+  filePath: string,
+  ref: string,
+  token: string
+): Promise<string | null> {
+  try {
+    return await fetchFile(repo, filePath, ref, token);
+  } catch (err) {
+    if (err instanceof Error && /GitHub API failed \(404\)/.test(err.message)) {
+      return null;
+    }
+    throw err;
+  }
+}
+
+function parseJsoncObject(
+  content: string,
+  label: string
+): Record<string, unknown> {
+  const parsed = JSON.parse(stripJsonComments(content)) as unknown;
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error(`[fetch] ${label} must be a JSON object.`);
+  }
+  return parsed as Record<string, unknown>;
+}
+
+function mergePatch(
+  target: unknown,
+  patch: unknown
+): Record<string, unknown> | unknown {
+  if (!patch || typeof patch !== 'object' || Array.isArray(patch)) {
+    return patch;
+  }
+
+  const base: Record<string, unknown> =
+    target && typeof target === 'object' && !Array.isArray(target)
+      ? { ...(target as Record<string, unknown>) }
+      : {};
+
+  for (const [key, value] of Object.entries(patch as Record<string, unknown>)) {
+    if (value === null) {
+      delete base[key];
+      continue;
+    }
+
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      !Array.isArray(value) &&
+      typeof base[key] === 'object' &&
+      base[key] !== null &&
+      !Array.isArray(base[key])
+    ) {
+      base[key] = mergePatch(base[key], value) as Record<string, unknown>;
+      continue;
+    }
+
+    base[key] = value;
+  }
+
+  return base;
+}
+
+function validateResumePatch(
+  patch: Record<string, unknown>,
+  variant: string,
+  localeLabel: string
+): void {
+  if ('$schema' in patch) {
+    throw new Error(
+      `[fetch] resume/variants/${variant}/${localeLabel}.patch.jsonc must not include "$schema".`
+    );
+  }
+
+  const unknown = Object.keys(patch).filter(
+    (key) => !RESUME_TOP_LEVEL_KEYS.has(key)
+  );
+  if (unknown.length > 0) {
+    throw new Error(
+      `[fetch] resume/variants/${variant}/${localeLabel}.patch.jsonc has unknown top-level keys: ${unknown.join(', ')}`
+    );
+  }
+}
+
 async function fetchResume(
   repo: string,
   ref: string,
-  token: string
+  token: string,
+  variant: string
 ): Promise<void> {
   const results = await Promise.allSettled(
     SUPPORTED_LOCALES.map(async (locale) => {
-      const remotePath = `resume/${locale}/data.jsonc`;
+      const baseRemotePath = `resume/base/${locale}/data.jsonc`;
+      const baseFallbackPath = 'resume/base/en/data.jsonc';
+      const legacyRemotePath = `resume/${locale}/data.jsonc`;
+      const legacyFallbackPath = 'resume/en/data.jsonc';
       const outDir = `src/content/resume/${locale}`;
       const outPath = path.join(outDir, 'data.jsonc');
 
       try {
-        const decoded = await fetchFile(repo, remotePath, ref, token);
-        const finalJsonc = coerceSchemaPath(decoded);
+        const localeBase = await fetchOptionalFile(
+          repo,
+          baseRemotePath,
+          ref,
+          token
+        );
+        const fallbackBase =
+          localeBase === null
+            ? await fetchOptionalFile(repo, baseFallbackPath, ref, token)
+            : null;
+        const legacyLocaleBase =
+          localeBase === null && fallbackBase === null
+            ? await fetchOptionalFile(repo, legacyRemotePath, ref, token)
+            : null;
+        const legacyFallbackBase =
+          localeBase === null &&
+          fallbackBase === null &&
+          legacyLocaleBase === null
+            ? await fetchOptionalFile(repo, legacyFallbackPath, ref, token)
+            : null;
+
+        const resolvedBase =
+          localeBase ?? fallbackBase ?? legacyLocaleBase ?? legacyFallbackBase;
+
+        if (!resolvedBase) {
+          console.info(`[fetch] Resume (${locale}): base not found, skipping.`);
+          return null;
+        }
+
+        let merged = parseJsoncObject(resolvedBase, `Resume base (${locale})`);
+
+        if (variant !== 'default') {
+          const patchRemotePath = `resume/variants/${variant}/${locale}.patch.jsonc`;
+          const patchFallbackPath = `resume/variants/${variant}/en.patch.jsonc`;
+          const localePatch = await fetchOptionalFile(
+            repo,
+            patchRemotePath,
+            ref,
+            token
+          );
+          const fallbackPatch =
+            localePatch === null
+              ? await fetchOptionalFile(repo, patchFallbackPath, ref, token)
+              : null;
+          const resolvedPatch = localePatch ?? fallbackPatch;
+
+          if (resolvedPatch) {
+            const patch = parseJsoncObject(
+              resolvedPatch,
+              `Resume patch (${variant}/${locale})`
+            );
+            validateResumePatch(patch, variant, localePatch ? locale : 'en');
+            merged = mergePatch(merged, patch) as Record<string, unknown>;
+          }
+        }
+
+        const withSchema = {
+          ...merged,
+          $schema: './data.schema.json',
+        };
+        const finalJsonc = JSON.stringify(withSchema, null, 2) + '\n';
         await mkdir(outDir, { recursive: true });
         await writeFile(outPath, finalJsonc, 'utf8');
-        console.info(`[fetch] Resume (${locale}): ${outPath}`);
+        console.info(
+          `[fetch] Resume (${locale}, variant=${variant}): ${outPath}`
+        );
         return locale;
-      } catch {
-        console.info(`[fetch] Resume (${locale}): not found, skipping.`);
-        return null;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        throw new Error(`[fetch] Resume (${locale}) failed: ${message}`);
       }
     })
   );
@@ -201,9 +355,7 @@ async function fetchBlogPosts(
   const succeeded = results.filter((r) => r.status === 'fulfilled');
   const failed = results.filter((r) => r.status === 'rejected');
 
-  console.info(
-    `[fetch] Blog: ${succeeded.length} posts fetched to ${outDir}`
-  );
+  console.info(`[fetch] Blog: ${succeeded.length} posts fetched to ${outDir}`);
   if (failed.length > 0) {
     console.warn(`[fetch] Blog: ${failed.length} posts failed to fetch`);
   }
@@ -228,6 +380,7 @@ async function main(): Promise<void> {
   const repo = getEnv('CONTENT_REPO');
   const ref = getEnv('CONTENT_REF') ?? 'main';
   const token = getEnv('CONTENT_GITHUB_TOKEN');
+  const variant = getEnv('RESUME_VARIANT') ?? 'default';
 
   if (!repo) {
     const hasLocalResume = await fileExists('src/content/resume');
@@ -251,7 +404,7 @@ async function main(): Promise<void> {
   }
 
   await Promise.all([
-    fetchResume(repo, ref, token),
+    fetchResume(repo, ref, token, variant),
     fetchLanding(repo, ref, token),
     fetchBlogPosts(repo, ref, token),
     fetchQuotes(repo, ref, token),
