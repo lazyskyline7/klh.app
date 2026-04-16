@@ -18,7 +18,7 @@ const LOCALE_LABELS: Record<string, string> = {
 const LOCALES = Object.keys(LOCALE_LABELS);
 
 interface SettingsMenuProps {
-  locale?: string;
+  locale: string;
 }
 
 const SettingsMenu: FC<SettingsMenuProps> = ({ locale }) => {
@@ -26,6 +26,7 @@ const SettingsMenu: FC<SettingsMenuProps> = ({ locale }) => {
   const [langOpen, setLangOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const showLocaleSwitcher = !pathname.endsWith('/resume');
   const showPrint = pathname.endsWith('/resume');
 
   const toggleMenu = () => {
@@ -36,10 +37,7 @@ const SettingsMenu: FC<SettingsMenuProps> = ({ locale }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
-      ) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setLangOpen(false);
       }
@@ -66,7 +64,7 @@ const SettingsMenu: FC<SettingsMenuProps> = ({ locale }) => {
       >
         <ThemeSwitcher />
 
-        {locale && (
+        {showLocaleSwitcher && (
           <div className="relative flex items-center justify-end gap-2">
             {/* Expanded locale options */}
             <div
